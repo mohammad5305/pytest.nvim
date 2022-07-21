@@ -1,9 +1,6 @@
 # TODO
-- [ ] create a test (for pytest) snippet for a function or class with treesitter
+- [x] create a test for pytest
+- [ ] seperate class snippet and function snippet
+- [ ] makeing tests directory if not exsiest
+- [ ] puting snippet in file on tests dir
 - [ ] sign for tests on signcolumn
-
-
-
-%% treesitter query for getting name and docstring
-%% (function_definition body: (block (expression_statement (string)@capture))) @capture
-%% (function_definition name: (identifier)@capture)
