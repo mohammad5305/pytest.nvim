@@ -1,5 +1,7 @@
 # TODO
-[ ] create a test (for pytest) snippet for a function or class with treesitter
+- [ ] create a test (for pytest) snippet for a function or class with treesitter
+- [ ] sign for tests on signcolumn
+
 
 
 %% treesitter query for getting name and docstring
