@@ -31,10 +31,34 @@ local function makeSnippet(functionName, docstring)
     ]], functionName, docstring)
 end
 
-snippet = M.split(makeSnippet(
-    getQuery('(function_definition name: (identifier)@capture)', 4)[1],
-    getQuery('(function_definition body: (block (expression_statement (string)@capture)))', 4)[1]
-), "\n")
+local function insertSnippet(bufnum, mode)
+    local functionNames =  getQuery('(function_definition name: (identifier)@capture)', bufnum)
+    local docstrings = getQuery('(function_definition body: (block (expression_statement (string)@capture)))', bufnum)
 
+    for i=1,#functionNames do
+        local functionName = functionNames[i]
+        local docstring = docstrings[i]
 
-vim.api.nvim_buf_set_lines(bufnum, -1, -1, false, snippet)
+        -- TODO: weird but working :)
+        if tonumber(tostring(functionName:start()))+1 == tonumber(tostring(docstring:start())) then
+            snippet = M.split(makeSnippet(
+                treesitter.get_node_text(functionName, bufnum),
+                treesitter.get_node_text(docstring, bufnum)
+            ), "\n")
+        else
+            repeat 
+                k = i + 1
+                docstring = docstrings[k]
+            until rowFuncName+1 >= tonumber(tostring(docstring:start()))
+
+            snippet = split(makeSnippet(
+                treesitter.get_node_text(functionName, bufnum),
+                treesitter.get_node_text(docstring, bufnum)
+            ), "\n")
+        end
+
+        vim.api.nvim_buf_set_lines(bufnum, -1, -1, false, snippet)
+    end
+
+end
+
