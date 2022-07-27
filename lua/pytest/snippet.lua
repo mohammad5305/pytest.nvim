@@ -1,18 +1,20 @@
-require "helper"
+require "pytest.helper"
+
+local treesitter = vim.treesitter
 
 local function getQuery(pattern, bufnum, parser)
     if parser == nil then
-        parser = vim.treesitter.get_parser(bufnum)
+        parser = treesitter.get_parser(bufnum)
     end
 
     local matches = {}
     local syntax_tree = parser:parse()
     local root = syntax_tree[1]:root()
 
-    local query = vim.treesitter.parse_query('python', pattern)
+    local query = treesitter.parse_query('python', pattern)
     
     for id, match, metadata in query:iter_matches(root, bufnum, root:start(), root:end_()) do
-        table.insert(matches, vim.treesitter.query.get_node_text(match[1], bufnum))
+        table.insert(matches, match[1])
     end
 
     return matches
@@ -35,4 +37,4 @@ snippet = M.split(makeSnippet(
 ), "\n")
 
 
-vim.api.nvim_buf_set_lines(0, -1, -1, false, snippet)
+vim.api.nvim_buf_set_lines(bufnum, -1, -1, false, snippet)
