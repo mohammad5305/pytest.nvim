@@ -1,7 +1,7 @@
 # Pytest.nvim
 
 ## Description
-`pytest.nvim`  is an plugin for running tests asyncronsly and making test snippet based on treesitter
+`pytest.nvim`  is an plugin for running tests asynchronously and making test snippet based on treesitter
 
 ## Installation
 
