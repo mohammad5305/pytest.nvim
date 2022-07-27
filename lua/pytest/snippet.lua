@@ -1,4 +1,6 @@
-require "pytest.helper"
+local snippet = {}
+
+local helper = require("pytest.helper") 
 
 local treesitter = vim.treesitter
 
@@ -20,6 +22,7 @@ local function getQuery(pattern, bufnum, parser)
     return matches
 
 end
+
 local function makeSnippet(functionName, docstring)
     docstring = string.gsub(docstring, '[\n|\t|"""]', "")
     -- TODO: combin these regex
@@ -31,7 +34,7 @@ local function makeSnippet(functionName, docstring)
     ]], functionName, docstring)
 end
 
-local function insertSnippet(bufnum, mode)
+function snippet.insertSnippet(bufnum, mode)
     local functionNames =  getQuery('(function_definition name: (identifier)@capture)', bufnum)
     local docstrings = getQuery('(function_definition body: (block (expression_statement (string)@capture)))', bufnum)
 
@@ -41,7 +44,7 @@ local function insertSnippet(bufnum, mode)
 
         -- TODO: weird but working :)
         if tonumber(tostring(functionName:start()))+1 == tonumber(tostring(docstring:start())) then
-            snippet = M.split(makeSnippet(
+            snippetStringTable = helper.split(makeSnippet(
                 treesitter.get_node_text(functionName, bufnum),
                 treesitter.get_node_text(docstring, bufnum)
             ), "\n")
@@ -51,14 +54,15 @@ local function insertSnippet(bufnum, mode)
                 docstring = docstrings[k]
             until rowFuncName+1 >= tonumber(tostring(docstring:start()))
 
-            snippet = split(makeSnippet(
+            snippetStringTable = helper.split(makeSnippet(
                 treesitter.get_node_text(functionName, bufnum),
                 treesitter.get_node_text(docstring, bufnum)
             ), "\n")
         end
 
-        vim.api.nvim_buf_set_lines(bufnum, -1, -1, false, snippet)
+        vim.api.nvim_buf_set_lines(bufnum, -1, -1, false, snippetStringTable)
     end
 
 end
 
+return snippet
