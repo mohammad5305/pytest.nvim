@@ -9,12 +9,19 @@
 
 ```
 Plug 'mohammad5305/pytest.nvim'
+
+lua << EOF
+require("pytest").setup()
+EOF
 ```
 
 [packer](https://github.com/wbthomason/packer.nvim)
 
 ```
-use 'mohammad5305/pytest.nvim'
+use {
+    'mohammad5305/pytest.nvim',
+    config = function () require('pytest').setup() end
+}
 ```
 
 ## Contributing
