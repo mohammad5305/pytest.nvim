@@ -28,6 +28,7 @@ local function makeSnippet(functionName, docstring)
     return string.format([[ 
     def test_%s():
         """ test %s """
+        pass
 
     ]], functionName, docstring)
 end
@@ -57,10 +58,9 @@ function snippet.insertSnippet(bufnr, mode, testDir, filename)
                 treesitter.get_node_text(docstring, bufnr)
             ), "\n")
         end
-        vim.cmd('e'..testDir..filename)
+        vim.cmd('e '..testDir..filename)
         vim.api.nvim_buf_set_lines(vim.api.nvim_buf_get_number(0), -1, -1, false, snippetStringTable)
     end
-
 end
 
 return snippet
