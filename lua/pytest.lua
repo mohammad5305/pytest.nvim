@@ -10,8 +10,8 @@ function is_dir(path)
 end
 
 function pytest.setup(opts)
-    if opts ~= nil then
-        local opts = defualtOpts
+    if opts == nil then
+        opts = defualtOpts
     end
 
         vim.api.nvim_create_user_command("PytestMkSnip", function ()
