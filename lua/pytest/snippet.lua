@@ -32,7 +32,7 @@ local function makeSnippet(functionName, docstring)
     ]], functionName, docstring)
 end
 
-function snippet.insertSnippet(bufnr, mode)
+function snippet.insertSnippet(bufnr, mode, testDir, filename)
     local functionNames =  getQuery('(function_definition name: (identifier)@capture)', bufnr)
     local docstrings = getQuery('(function_definition body: (block (expression_statement (string)@capture)))', bufnr)
 
@@ -57,8 +57,8 @@ function snippet.insertSnippet(bufnr, mode)
                 treesitter.get_node_text(docstring, bufnr)
             ), "\n")
         end
-
-        vim.api.nvim_buf_set_lines(bufnr, -1, -1, false, snippetStringTable)
+        vim.cmd('e'..testDir..filename)
+        vim.api.nvim_buf_set_lines(vim.api.nvim_buf_get_number(0), -1, -1, false, snippetStringTable)
     end
 
 end
