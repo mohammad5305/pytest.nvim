@@ -32,4 +32,5 @@ Read [CONTRIBUTING.md](CONTRIBUTING.md)
 * separate class snippet and function snippet
 * making tests directory if not exist
 * putting snippet in file on tests directory
-* sign for tests on signcolumn
+* put result of tests on signcolumn 
+* write CONTRIBUTING file
