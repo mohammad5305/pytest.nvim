@@ -1,7 +1,5 @@
 local snippet = {}
 
-local helper = require("pytest.helper") 
-
 local treesitter = vim.treesitter
 
 local function getQuery(pattern, bufnum, parser)
@@ -44,7 +42,7 @@ function snippet.insertSnippet(bufnum, mode)
 
         -- TODO: weird but working :)
         if tonumber(tostring(functionName:start()))+1 == tonumber(tostring(docstring:start())) then
-            snippetStringTable = helper.split(makeSnippet(
+            snippetStringTable = vim.split(makeSnippet(
                 treesitter.get_node_text(functionName, bufnum),
                 treesitter.get_node_text(docstring, bufnum)
             ), "\n")
@@ -54,7 +52,7 @@ function snippet.insertSnippet(bufnum, mode)
                 docstring = docstrings[k]
             until rowFuncName+1 >= tonumber(tostring(docstring:start()))
 
-            snippetStringTable = helper.split(makeSnippet(
+            snippetStringTable = vim.split(makeSnippet(
                 treesitter.get_node_text(functionName, bufnum),
                 treesitter.get_node_text(docstring, bufnum)
             ), "\n")
