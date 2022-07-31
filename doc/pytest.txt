@@ -30,11 +30,11 @@ SNIPPET								*pytest.snippet*
 pytest.snippet.insertSnippet({bufnr}, {mode})			*pytest.insertSnippet*
 make snippet with the query of treesitter and write the output to the file on {bufnr}
 
-Parameters: ~
-{line} 	(number)  the buffer number that snippet will go there
-{mode} 	(char)   the mode that query most consider when getting output defualt 
-is 'n' mean making all functions on file, and 'v' mean just make snippet for
-the selected range
+    Parameters: ~
+    {line} 	(number)  the buffer number that snippet will go there
+    {mode} 	(char)   the mode that query must consider when getting output, defualt 
+    is 'n' that mean making snippet for all functions on file, and 'v' mean just make snippet for
+    the selected range
 
 
 
