@@ -1,0 +1,41 @@
+*pytest.nvim* 			a simple plugin for making pytest snippet and running tests
+
+                                      Type |gO| to see the table of contents.
+
+==============================================================================
+INTRODUCTION                               			*pytest.nvim*
+
+pytest.nvim is a simple and fast plugin for making pytest snippet and running
+the tests blazingly fast
+
+Getting Start with pytest:
+- Run `require('pytest').setup()` or use packer 'config' directive
+- For making snippet use `:PytestMkSnip` or for visual selection use `:PytestMkSnipV`
+  this commands will use treesitter to get the function name and docstring,
+  more detail in |pytest.snippet|
+
+
+
+pytest.setup({opts})                                    *pytest.setup()*
+    Setup function to be run by user. Configures the behavior of plugin.
+
+    Usage:
+    >
+    pytest.setup({})
+<
+    
+    
+SNIPPET								*pytest.snippet*
+
+pytest.snippet.insertSnippet({bufnr}, {mode})			*pytest.insertSnippet*
+make snippet with the query of treesitter and write the output to the file on {bufnr}
+
+Parameters: ~
+{line} 	(number)  the buffer number that snippet will go there
+{mode} 	(char)   the mode that query most consider when getting output defualt 
+is 'n' mean making all functions on file, and 'v' mean just make snippet for
+the selected range
+
+
+
+vim:tw=78:ts=8:ft=help:norl:
