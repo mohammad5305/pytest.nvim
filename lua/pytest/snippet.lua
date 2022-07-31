@@ -36,6 +36,7 @@ end
 function snippet.insertSnippet(bufnr, mode, testDir, filename)
     local functionNames =  getQuery('(function_definition name: (identifier)@capture)', bufnr)
     local docstrings = getQuery('(function_definition body: (block (expression_statement (string)@capture)))', bufnr)
+    local snippetTables = {}
 
     for i=1,#functionNames do
         local functionName = functionNames[i]
@@ -43,24 +44,27 @@ function snippet.insertSnippet(bufnr, mode, testDir, filename)
 
         -- TODO: weird but working :)
         if tonumber(tostring(functionName:start()))+1 == tonumber(tostring(docstring:start())) then
-            snippetStringTable = vim.split(makeSnippet(
+            table.insert(snippetTables, vim.split(makeSnippet(
                 treesitter.get_node_text(functionName, bufnr),
                 treesitter.get_node_text(docstring, bufnr)
-            ), "\n")
+            ), "\n"))
         else
             repeat 
                 k = i + 1
                 docstring = docstrings[k]
             until rowFuncName+1 >= tonumber(tostring(docstring:start()))
 
-            snippetStringTable = vim.split(makeSnippet(
+            table.insert(snippetTables, vim.split(makeSnippet(
                 treesitter.get_node_text(functionName, bufnr),
                 treesitter.get_node_text(docstring, bufnr)
-            ), "\n")
+            ), "\n"))
         end
-        vim.cmd('e '..testDir..filename)
-        vim.api.nvim_buf_set_lines(vim.api.nvim_buf_get_number(0), -1, -1, false, snippetStringTable)
     end
+    vim.cmd('e '..testDir..filename)
+    for index, snippet in ipairs(snippetTables) do
+        vim.api.nvim_buf_set_lines(vim.api.nvim_buf_get_number(0), -1, -1, false, snippet)
+    end
+
 end
 
 return snippet
