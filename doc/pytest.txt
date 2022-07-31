@@ -28,7 +28,9 @@ pytest.setup({opts})                                    *pytest.setup()*
 SNIPPET								*pytest.snippet*
 
 pytest.snippet.insertSnippet({bufnr}, {mode})			*pytest.insertSnippet*
-make snippet with the query of treesitter and write the output to the file on {bufnr}
+
+    Description ~
+    make snippet with the query of treesitter and write the output to the file on {bufnr}
 
     Parameters: ~
     {line} 	(number)  the buffer number that snippet will go there
