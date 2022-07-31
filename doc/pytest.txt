@@ -1,9 +1,8 @@
-*pytest.nvim* 			a simple plugin for making pytest snippet and running tests
+*pytest.nvim*  	   a simple plugin for making pytest snippet and running tests
 
-                                      Type |gO| to see the table of contents.
-
+                                         Type |gO| to see the table of contents.
 ==============================================================================
-INTRODUCTION                               			*pytest.nvim*
+INTRODUCTION                               		           *pytest.nvim*
 
 pytest.nvim is a simple and fast plugin for making pytest snippet and running
 the tests blazingly fast
@@ -16,28 +15,31 @@ Getting Start with pytest:
 
 
 
-pytest.setup({opts})                                    *pytest.setup()*
+pytest.setup({opts})                                            *pytest.setup()*
     Setup function to be run by user. Configures the behavior of plugin.
 
     Usage:
     >
-    pytest.setup({})
+    pytest.setup({
+            testDir="tests"
+        })
 <
     
     
-SNIPPET								*pytest.snippet*
+SNIPPET							       	*pytest.snippet*
 
-pytest.snippet.insertSnippet({bufnr}, {mode})			*pytest.insertSnippet*
+pytest.snippet.insertSnippet({bufnr}, {mode}, {testDir}, {filename}) *pytest.insertSnippet*
 
     Description ~
-    make snippet with the query of treesitter and write the output to the file on {bufnr}
+    make snippet with the query of treesitter and write the output to {filename} on {testDir} directory.
 
     Parameters: ~
-    {line} 	(number)  the buffer number that snippet will go there
+    {bufnr} 	(number)  the buffer number that the code is there
     {mode} 	(char)   the mode that query must consider when getting output, defualt 
     is 'n' that mean making snippet for all functions on file, and 'v' mean just make snippet for
     the selected range
-
+    {testDir} 	(string)  directory of test file
+    {filename} 	(string)  name of the test file
 
 
 vim:tw=78:ts=8:ft=help:norl:
