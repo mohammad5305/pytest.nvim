@@ -9,13 +9,13 @@ function pytest.setup(opts)
     end
 
     vim.api.nvim_create_user_command("PytestMkSnip", function ()
-        local bufnum = vim.api.nvim_buf_get_number(0)
-        snippet.insertSnippet(bufnum, "n")
+        local bufnr = vim.api.nvim_buf_get_number(0)
+        snippet.insertSnippet(bufnr, "n")
     end,{})
 
-    vim.api.nvim_create_user_command("PytestMkSnip", function ()
-        local bufnum = vim.api.nvim_buf_get_number(0)
-        snippet.insertSnippet(bufnum, "v")
+    vim.api.nvim_create_user_command("PytestMkSnipV", function ()
+        local bufnr = vim.api.nvim_buf_get_number(0)
+        snippet.insertSnippet(bufnr, "v")
     end, { range=true })
 end
 

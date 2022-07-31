@@ -2,9 +2,9 @@ local snippet = {}
 
 local treesitter = vim.treesitter
 
-local function getQuery(pattern, bufnum, parser)
+local function getQuery(pattern, bufnr, parser)
     if parser == nil then
-        parser = treesitter.get_parser(bufnum)
+        parser = treesitter.get_parser(bufnr)
     end
 
     local matches = {}
@@ -13,7 +13,7 @@ local function getQuery(pattern, bufnum, parser)
 
     local query = treesitter.parse_query('python', pattern)
     
-    for id, match, metadata in query:iter_matches(root, bufnum, root:start(), root:end_()) do
+    for id, match, metadata in query:iter_matches(root, bufnr, root:start(), root:end_()) do
         table.insert(matches, match[1])
     end
 
@@ -32,9 +32,9 @@ local function makeSnippet(functionName, docstring)
     ]], functionName, docstring)
 end
 
-function snippet.insertSnippet(bufnum, mode)
-    local functionNames =  getQuery('(function_definition name: (identifier)@capture)', bufnum)
-    local docstrings = getQuery('(function_definition body: (block (expression_statement (string)@capture)))', bufnum)
+function snippet.insertSnippet(bufnr, mode)
+    local functionNames =  getQuery('(function_definition name: (identifier)@capture)', bufnr)
+    local docstrings = getQuery('(function_definition body: (block (expression_statement (string)@capture)))', bufnr)
 
     for i=1,#functionNames do
         local functionName = functionNames[i]
@@ -43,8 +43,8 @@ function snippet.insertSnippet(bufnum, mode)
         -- TODO: weird but working :)
         if tonumber(tostring(functionName:start()))+1 == tonumber(tostring(docstring:start())) then
             snippetStringTable = vim.split(makeSnippet(
-                treesitter.get_node_text(functionName, bufnum),
-                treesitter.get_node_text(docstring, bufnum)
+                treesitter.get_node_text(functionName, bufnr),
+                treesitter.get_node_text(docstring, bufnr)
             ), "\n")
         else
             repeat 
@@ -53,12 +53,12 @@ function snippet.insertSnippet(bufnum, mode)
             until rowFuncName+1 >= tonumber(tostring(docstring:start()))
 
             snippetStringTable = vim.split(makeSnippet(
-                treesitter.get_node_text(functionName, bufnum),
-                treesitter.get_node_text(docstring, bufnum)
+                treesitter.get_node_text(functionName, bufnr),
+                treesitter.get_node_text(docstring, bufnr)
             ), "\n")
         end
 
-        vim.api.nvim_buf_set_lines(bufnum, -1, -1, false, snippetStringTable)
+        vim.api.nvim_buf_set_lines(bufnr, -1, -1, false, snippetStringTable)
     end
 
 end
