@@ -15,8 +15,7 @@ function pytest.setup(opts)
         vim.api.nvim_create_user_command("PytestMkSnip", function ()
             if helper.is_dir(vim.loop.cwd()..'/'..opts['testDir']) == 0 then
                 local bufnr = vim.api.nvim_get_current_buf()
-                local filename = string.gsub(vim.api.nvim_buf_get_name(bufnr), vim.loop.cwd()..'/', '')
-                snippet.insertSnippet(bufnr, "n", opts['testDir'], 'test_'..filename)
+                snippet.insertSnippet(bufnr, "n", opts['testDir'], 'test_'..vim.fn.expand('%'))
             else
                 -- TODO: getting answar from user
                 print(string.format("%s direcotry not exists in current path should I make?", opts['testDir']))
@@ -27,8 +26,7 @@ function pytest.setup(opts)
         vim.api.nvim_create_user_command("PytestMkSnipV", function ()
             if helper.is_dir(vim.loop.cwd()..'/'..opts['testDir']) == 1 then
                 local bufnr = vim.api.nvim_get_current_buf()
-                local filename = string.gsub(vim.api.nvim_buf_get_name(bufnr), vim.loop.cwd()..'/', '')
-                snippet.insertSnippet(bufnr, "v", opts['testDir'], 'test_'..filename)
+                snippet.insertSnippet(bufnr, "v", opts['testDir'], 'test_'..vim.fn.expand('%'))
             else
                 -- TODO: getting answar from user
                 print(string.format("%s direcotry not exists in current path should I make?", opts['testDir']))
