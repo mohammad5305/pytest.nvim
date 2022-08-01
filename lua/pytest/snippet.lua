@@ -62,7 +62,7 @@ function snippet.insertSnippet(bufnr, mode, testDir, filename)
     end
     vim.cmd('e '..testDir..filename)
     for index, snippet in ipairs(snippetTables) do
-        vim.api.nvim_buf_set_lines(vim.api.nvim_buf_get_number(0), -1, -1, false, snippet)
+        vim.api.nvim_buf_set_lines(vim.api.nvim_get_current_buf(), -1, -1, false, snippet)
     end
 
 end
