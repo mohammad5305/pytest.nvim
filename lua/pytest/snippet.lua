@@ -61,8 +61,15 @@ function snippet.insertSnippet(bufnr, mode, testDir, filename)
         end
     end
     vim.cmd('e '..testDir..filename)
+    local testFile = table.concat(vim.api.nvim_buf_get_lines(vim.api.nvim_get_current_buf(), 0, -1, false), "\n")
+
     for index, snippet in ipairs(snippetTables) do
-        vim.api.nvim_buf_set_lines(vim.api.nvim_get_current_buf(), -1, -1, false, snippet)
+        local functionPattern = "def %w+_(.+):"
+        local _, _, snippetMatch = string.find(table.concat(snippet, "\n"), functionPattern)
+
+        if string.match(testFile, snippetMatch) == nil then
+            vim.api.nvim_buf_set_lines(vim.api.nvim_get_current_buf(), -1, -1, false, snippet)
+        end
     end
 
 end
