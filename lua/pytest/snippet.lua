@@ -25,12 +25,11 @@ local function makeSnippet(functionName, docstring)
     docstring = string.gsub(docstring, '[\n|\t|"""]', "")
     -- TODO: combin these regex
     docstring = string.gsub(docstring, '(%s+)(%s*)(%s+)', "")
-    return string.format([[ 
-    def test_%s():
-        """ test %s """
-        pass
+    return string.format([[def test_%s():
+    """ test %s """
+    pass
 
-    ]], functionName, docstring)
+]], functionName, docstring)
 end
 
 function snippet.insertSnippet(bufnr, mode, testDir, filename)
