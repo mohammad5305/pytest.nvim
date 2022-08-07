@@ -1,7 +1,7 @@
 # Contributing to pytest.nvim
 we are glade seeing you here, thanks for spending time for this project
 
-## How to setup pytest.nvim
+## How to setup pytest.nvim for develop
 nothing special needed just install it normally
 
 [Installation Guide](README.md/#installation)
