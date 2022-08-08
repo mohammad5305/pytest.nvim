@@ -2,7 +2,15 @@
 we are glade seeing you here, thanks for spending time for this project
 
 ## How to setup pytest.nvim for develop
-nothing special needed just install it normally
+nothing special needed just install `pytest.nvim` and [plenary](https://github.com/nvim-lua/plenary.nvim) for running tests
+
+Simple pre-commit hook:
+```
+#!/bin/sh
+TEST_DIR="$(git rev-parse --show-toplevel)/lua/tests/"
+
+nvim --headless -c "PlenaryBustedDirectory $TEST_DIR {}"
+```
 
 [Installation Guide](README.md/#installation)
 
