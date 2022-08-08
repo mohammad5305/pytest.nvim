@@ -2,7 +2,7 @@ local snippet = {}
 
 local treesitter = vim.treesitter
 
-local function getQuery(pattern, bufnr, parser)
+function snippet.getQuery(pattern, bufnr, parser)
     if parser == nil then
         parser = treesitter.get_parser(bufnr)
     end
@@ -21,7 +21,7 @@ local function getQuery(pattern, bufnr, parser)
 
 end
 
-local function makeSnippet(functionName, docstring)
+function snippet.makeSnippet(functionName, docstring)
     docstring = string.gsub(docstring, '[\n|\t|"""]', "")
     -- TODO: combin these regex
     docstring = string.gsub(docstring, '(%s+)(%s*)(%s+)', "")
@@ -33,8 +33,8 @@ local function makeSnippet(functionName, docstring)
 end
 
 function snippet.insertSnippet(bufnr, mode, testDir, filename)
-    local functionNames =  getQuery('(function_definition name: (identifier)@capture)', bufnr)
-    local docstrings = getQuery('(function_definition body: (block (expression_statement (string)@capture)))', bufnr)
+    local functionNames =  snippet.getQuery('(function_definition name: (identifier)@capture)', bufnr)
+    local docstrings = snippet.getQuery('(function_definition body: (block (expression_statement (string)@capture)))', bufnr)
     local snippetTables = {}
 
     for i=1,#functionNames do
@@ -43,7 +43,7 @@ function snippet.insertSnippet(bufnr, mode, testDir, filename)
 
         -- TODO: weird but working :)
         if tonumber(tostring(functionName:start()))+1 == tonumber(tostring(docstring:start())) then
-            table.insert(snippetTables, vim.split(makeSnippet(
+            table.insert(snippetTables, vim.split(snippet.makeSnippet(
                 treesitter.get_node_text(functionName, bufnr),
                 treesitter.get_node_text(docstring, bufnr)
             ), "\n"))
@@ -53,7 +53,7 @@ function snippet.insertSnippet(bufnr, mode, testDir, filename)
                 docstring = docstrings[k]
             until rowFuncName+1 >= tonumber(tostring(docstring:start()))
 
-            table.insert(snippetTables, vim.split(makeSnippet(
+            table.insert(snippetTables, vim.split(snippet.makeSnippet(
                 treesitter.get_node_text(functionName, bufnr),
                 treesitter.get_node_text(docstring, bufnr)
             ), "\n"))
