@@ -1,5 +1,6 @@
 describe("snippet", function()
-    local snippet = require "pytest.snippet"
+    local snippet = require("pytest.snippet")
+    local helper = require("pytest.helper")
 
     describe("makeSnippet", function ()
         it("should return a function with docstring", function()
@@ -20,8 +21,8 @@ describe("snippet", function()
             vim.cmd('e test.py')
             local bufnr = vim.api.nvim_get_current_buf()
             vim.api.nvim_buf_set_lines(bufnr, -1, -1, false, {"def testFunc():",'\t""" hello world"""',"\tpass" })
-            local functioNameQuery = snippet.getQuery('(function_definition name: (identifier)@capture)', bufnr)[1]
-            local docstringQuery = snippet.getQuery('(function_definition body: (block (expression_statement (string)@capture)))', bufnr)[1]
+            local functioNameQuery = helper.getQuery('(function_definition name: (identifier)@capture)', bufnr)[1]
+            local docstringQuery = helper.getQuery('(function_definition body: (block (expression_statement (string)@capture)))', bufnr)[1]
             assert.equals(vim.treesitter.get_node_text(functioNameQuery, bufnr), "testFunc")
             assert.equals(vim.treesitter.get_node_text(docstringQuery, bufnr), '""" hello world"""')
         end)

@@ -1,25 +1,7 @@
+local helper = require("pytest.helper")
 local snippet = {}
 
 local treesitter = vim.treesitter
-
-function snippet.getQuery(pattern, bufnr, parser)
-    if parser == nil then
-        parser = treesitter.get_parser(bufnr)
-    end
-
-    local matches = {}
-    local syntax_tree = parser:parse()
-    local root = syntax_tree[1]:root()
-
-    local query = treesitter.parse_query('python', pattern)
-    
-    for id, match, metadata in query:iter_matches(root, bufnr, root:start(), root:end_()) do
-        table.insert(matches, match[1])
-    end
-
-    return matches
-
-end
 
 function snippet.makeSnippet(functionName, docstring)
     docstring = string.gsub(docstring, '[\n|\t|"""]', "")
@@ -33,8 +15,8 @@ function snippet.makeSnippet(functionName, docstring)
 end
 
 function snippet.insertSnippet(bufnr, mode, testDir, filename)
-    local functionNames =  snippet.getQuery('(function_definition name: (identifier)@capture)', bufnr)
-    local docstrings = snippet.getQuery('(function_definition body: (block (expression_statement (string)@capture)))', bufnr)
+    local functionNames =  helper.getQuery('(function_definition name: (identifier)@capture)', bufnr)
+    local docstrings = helper.getQuery('(function_definition body: (block (expression_statement (string)@capture)))', bufnr)
     local snippetTables = {}
 
     for i=1,#functionNames do
