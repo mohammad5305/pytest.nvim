@@ -31,7 +31,7 @@ SNIPPET							       	*pytest.snippet*
 pytest.snippet.insertSnippet({bufnr}, {mode}, {testDir}, {filename}) *pytest.insertSnippet*
 
     Description ~
-    make snippet with the query of treesitter and write the output to {filename} on {testDir} directory.
+    Get query from |pytest.getQuery| and pipe the output to |pytest.makeSnippet| and write the output to {filename} on {testDir} directory.
 
     Parameters: ~
     {bufnr} 	(number)  the buffer number that the code is there
@@ -40,6 +40,37 @@ pytest.snippet.insertSnippet({bufnr}, {mode}, {testDir}, {filename}) *pytest.ins
     the selected range
     {testDir} 	(string)  directory of test file
     {filename} 	(string)  name of the test file
+
+
+
+pytest.makeSnippet({functionName}, {docstring})            *pytest.makeSnippet*
+
+    Description~
+    format the defualt template with functionName and docstring
+    defualt template:
+        >
+        def test_%s():
+            """ test %s """
+            pass
+<
+            
+    Parameters:~
+    {functionName} (string) name of the function
+    {docstring} (string) docstring of the function
+
+
+HELPER                                                          *pytest.helper*
+
+pytest.snippet.getQuery({pattern}, {bufnr}, {parser})         *pytest.getQuery*
+
+    Description~
+    with the given treesitter query and parser return a table of matches
+    from {bufnr} buffer.
+
+    Parameters:~
+    {pattern} (string) treesitter query
+    {bufnr} (number) buffer number that treesitter will look for matches on it
+    {parser} (table) treesitter parser if not given parser will gotten from {bufnr}
 
 
 vim:tw=78:ts=8:ft=help:norl:
