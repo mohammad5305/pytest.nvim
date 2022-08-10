@@ -22,6 +22,7 @@ pytest.setup({opts})                                            *pytest.setup()*
     >
     pytest.setup({
             testDir="tests"
+            dirExistancePrmopt=nil
         })
 <
     
