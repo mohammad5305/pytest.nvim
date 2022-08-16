@@ -1,7 +1,9 @@
 # Contributing to pytest.nvim
+
 we are glade seeing you here, thanks for spending time for this project
 
 ## How to setup pytest.nvim for develop
+
 nothing special needed just install `pytest.nvim` and [plenary](https://github.com/nvim-lua/plenary.nvim) for running tests
 
 Simple pre-commit hook:
@@ -15,15 +17,18 @@ nvim --headless -c "PlenaryBustedDirectory $TEST_DIR {}"
 [Installation Guide](README.md/#installation)
 
 ## Tests
+
 there is no tests yet but it will be in `lua/tests/` directory 
 and this guide will be written more detail later 
 
 ## Style Guides
 
 ### Code Style
+
 naming convention is camelCase for codes and snake_case for file names
 
 ### Commit Message Style
+
 conventional commit message is required, PR without using conventional will not merge (I know right now it my dictatory :) )
 
 and emojis are cool but it better to don't use them
@@ -34,4 +39,5 @@ and emojis are cool but it better to don't use them
 
 
 ## Where can I ask for help? 
+
 sending email to `mohammad.bajalal546@gmail.com` or make an issue (for now because the community is not big)
