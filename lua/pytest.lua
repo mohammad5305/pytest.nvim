@@ -15,30 +15,12 @@ function pytest.setup(opts)
 
     vim.api.nvim_create_user_command("PytestMkSnip", function ()
         local bufnr = vim.api.nvim_get_current_buf()
-        if opts['dirExistancePrmopt'] then
             if helper.is_dir(vim.loop.cwd()..'/'..opts['testDir']) == 0 then
                 snippet.insertSnippet(bufnr, "n", opts['testDir'], 'test_'..vim.fn.expand('%'))
             else
-                vim.ui.select({ string.format('create %s', opts['testDir']), 'custom dir name' },
-                    {prompt=string.format("%s no such directory in current path: ", opts['testDir'])},
-                    function(choice, number) 
-                        vim.cmd("redraw")
-                        if number == 1 then
-                            vim.fn.mkdir(opts['testDir'])
-                            snippet.insertSnippet(bufnr, "n", opts['testDir'], 'test_'..vim.fn.expand('%'))
-
-                        elseif number == 2 then
-                            vim.ui.input({prompt="directory name: "}, function(dirName)
-                                snippet.insertSnippet(bufnr, "n", string.find(dirName,'/') and dirName or dirName..'/' , 'test_'..vim.fn.expand('%'))
-                            end)
-                        end
-                    end)
+                local createdDir = helper.createDir(opts['testDir'], opts['dirExistancePrmopt'])
+                snippet.insertSnippet(bufnr, "n", createdDir, 'test_'..vim.fn.expand('%'))
             end
-
-        else
-            vim.fn.mkdir(opts['testDir'], "p")
-            snippet.insertSnippet(bufnr, "n", opts['testDir'], 'test_'..vim.fn.expand('%'))
-        end
 
     end, {})
 

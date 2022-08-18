@@ -23,6 +23,34 @@ function helper.getQuery(pattern, bufnr, parser)
 
 end
 
+function helper.createDir(dirName, prompt)
+  if prompt then
+    vim.ui.select({string.format('create %s', dirName), 'custom dir name'},
+      {
+        prompt = string.format("%s no such directory in current path: ", dirName)
+      }, function(choice, number)
+        vim.cmd("redraw")
+
+        if number == 1 then
+          vim.fn.mkdir(dirName)
+          return dirName
+        elseif number == 2 then
+          vim.ui.input({prompt = "directory name: "}, function(alterDir)
+            vim.fn.mkdir(alterDir, 'p')
+            return string.find(alterDir, '/') and alterDir or alterDir .. '/'
+          end)
+        end
+
+      end)
+
+  else
+    vim.fn.mkdir(dirName, 'p')
+    return dirName
+  end
+
+end
+
+
 
 
 return helper
