@@ -1,9 +1,5 @@
 local helper = {}
 
-function helper.is_dir(path)
-  return os.execute(('[ -d "%s" ]'):format(path))
-end
-
 function helper.getQuery(pattern, bufnr, parser)
   if parser == nil then
     parser = vim.treesitter.get_parser(bufnr)
