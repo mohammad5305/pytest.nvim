@@ -30,7 +30,7 @@ Read [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## TODO
 * separate class snippet and function snippet
-* making tests directory if not exist
-* putting snippet in file on tests directory
 * put result of tests on signcolumn 
-* write CONTRIBUTING file
+* better asking style when opts[testDir] not exist
+* test multi function and more docstring
+* checking for performance when putting user commands in setup()
