@@ -29,16 +29,16 @@ function helper.createDir(dirName, prompt)
 
         if number == 1 then
           vim.fn.mkdir(dirName)
-          return dirName
         elseif number == 2 then
           vim.ui.input({prompt = "directory name: "}, function(alterDir)
             vim.fn.mkdir(alterDir, 'p')
-            return string.find(alterDir, '/') and alterDir or alterDir .. '/'
+            dirName = string.find(alterDir, '/') and alterDir or alterDir .. '/'
           end)
         end
 
       end)
 
+    return dirName
   else
     vim.fn.mkdir(dirName, 'p')
     return dirName
