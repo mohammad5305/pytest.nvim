@@ -2,11 +2,15 @@ function setSignCol() end
 
 function findStatus(report, regex, index)
   _, indexEnd, path, functionName, status = string.find(report, regex, index)
-  return {
-    ['path'] = path,
-    ['functionName'] = functionName,
-    ['status'] = status
-  }, indexEnd + 1
+  if indexEnd then
+    return {
+      ['path'] = path,
+      ['functionName'] = functionName,
+      ['status'] = status
+    }, indexEnd + 1
+  else
+    return nil
+  end
 end
 
 function processReport(report, times)
@@ -16,9 +20,12 @@ function processReport(report, times)
     local reportTbl = {}
     local match = 0
     for i = 1, times do
-      match, lastIndex = findStatus(report, "([^%s]+)::([^%s]+)(%s%w+)",
-        lastIndex)
-      table.insert(reportTbl, match)
+      if lastIndex then
+        match, lastIndex = findStatus(report, "([^%s]+)::([^%s]+)(%s%w+)",
+          lastIndex)
+        table.insert(reportTbl, match)
+      end
+
     end
     return reportTbl
   else
@@ -49,7 +56,6 @@ function executePytest(cmd, cwd, async)
       stdout_buffered = true,
       stderr_buffered = true
     })
-    return result
   else
   end
 end
