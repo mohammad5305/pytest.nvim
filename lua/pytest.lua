@@ -1,6 +1,7 @@
--- just for readablity I use this var
+-- just for readablity I use this vars
 local snippet = require("pytest.snippet")
 local helper = require("pytest.helper")
+local execute = require("pytest.execute")
 local pytest = {}
 local defualtOpts = {
   testDir="tests/",
@@ -22,6 +23,13 @@ function pytest.setup(opts)
       snippet.insertSnippet(bufnr, "n", createdDir, 'test_'..vim.fn.expand('%'))
     end
 
+  end, {})
+
+  vim.api.nvim_create_user_command("PytestRun", function ()
+    local bufnr = vim.api.nvim_get_current_buf()
+    execute.executePytest(bufnr,
+      string.format("pytest -v --capture=no --no-summary --no-header --color=no  --disable-warnings %s| tr -d '='", vim.fn.expand('%p')),
+      vim.loop.cwd(), true)
   end, {})
 
   -- vim.api.nvim_create_user_command("PytestMkSnipV", function ()
