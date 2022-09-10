@@ -30,7 +30,7 @@ Read [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## TODO
 * separate class snippet and function snippet
-* put result of tests on signcolumn 
 * better asking style when opts[testDir] not exist
 * test multi function and more docstring
 * checking for performance when putting user commands in setup()
+* distinct the report string
