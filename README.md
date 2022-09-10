@@ -24,6 +24,11 @@ use {
 }
 ```
 
+## Usage
+
+For making snippet use `:PytestMkSnip` also for disabling the prompt when tests directory does
+not exist set `dirExistancePrmopt` option to false and for running tests `:PytestRun`
+
 ## Contributing
 Read [CONTRIBUTING.md](CONTRIBUTING.md)
 
