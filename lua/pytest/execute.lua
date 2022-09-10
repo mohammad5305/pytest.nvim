@@ -1,65 +1,61 @@
-function setSignCol() end
+local execute = {}
+local helper = require('pytest.helper')
 
-function findStatus(report, regex, index)
-  _, indexEnd, path, functionName, status = string.find(report, regex, index)
-  if indexEnd then
-    return {
-      ['path'] = path,
-      ['functionName'] = functionName,
-      ['status'] = status
-    }, indexEnd + 1
+vim.cmd('sign define PytestSucces text=S')
+vim.cmd('sign define PytestFailed text=F')
+function execute.setSignCol(id, state, bufnr, line)
+  if vim.trim(state) == "PASSED" then
+    vim.cmd(string.format('sign place %s group=pytest name=PytestSucces line=%s', id, line))
   else
-    return nil
+    vim.cmd(string.format('sign place %s group=pytest name=PytestFailed line=%s', id, line))
   end
 end
 
-function processReport(report, times)
-  if times then
-    -- TODO: combine these 2 varibale into one line
-    local lastIndex = 0
-    local reportTbl = {}
-    local match = 0
-    for i = 1, times do
-      if lastIndex then
-        match, lastIndex = findStatus(report, "([^%s]+)::([^%s]+)(%s%w+)",
-          lastIndex)
-        table.insert(reportTbl, match)
-      end
-
+function execute.processReport(report)
+  -- TODO: distinct the report
+  local reportTbl = {}
+  for _, line in ipairs(vim.split(report, '\n'))  do
+    if string.find(line, ':') then
+      local reportResult = vim.split(line, ':')
+      local functionName, status = unpack(vim.split(reportResult[#reportResult], " "))
+      table.insert(reportTbl, {['functionName'] = string.match(functionName, "[A-Za-z_]+"), ['status'] = status})
     end
-    return reportTbl
-  else
-    return findStatus(report, "([^%s]+)::([^%s]+)(%s%w+)")
   end
+  return reportTbl
 end
 
-function executePytest(cmd, cwd, async)
-  if async then
-    local times = nil
-    local function on_event(job_id, data, event)
-      if event == "stdout" or event == "stderr" then
-        if data then
-          local stringData = table.concat(data, "\n")
-          if times == nil then
-            _, _, times = string.find(stringData, "collected (%d+)")
+function execute.executePytest(bufnr, cmd, cwd)
+  local function on_event(job_id, data, event)
+    if event == "stdout" or event == "stderr" then
+      if data then
+        local stringData = table.concat(data, "\n")
+
+        local report = execute.processReport(stringData)
+        
+        local functionNames = helper.getQuery("(function_definition name: (identifier)@capture)", bufnr)
+
+        for _, case in ipairs(report) do
+          for _, query in ipairs(functionNames) do
+            if vim.treesitter.get_node_text(query, bufnr) == case.functionName  then
+              local lnum, _ = query:start()
+              execute.setSignCol(math.random(0, 50), case.status, bufnr, lnum+1)
+            end
+
           end
-          -- TODO: the the output of this function and pipe it to setSignCol also code base getting so complicated
-          processReport(stringData, times)
         end
       end
-
     end
 
-    local job_id = vim.fn.jobstart(cmd, {
-      cwd = cwd,
-      on_stdout = on_event,
-      stdout_buffered = true,
-      stderr_buffered = true
-    })
-  else
   end
+
+  local job_id = vim.fn.jobstart(cmd, {
+    cwd = cwd,
+    on_stdout = on_event,
+    stdout_buffered = true,
+    stderr_buffered = true,
+  })
+
 end
 
-executePytest(
-  "pytest -v --capture=no --no-summary --no-header --color=no  --disable-warnings | tr -d '='",
-  '/tmp/pytest-example/', true)
+
+return execute
