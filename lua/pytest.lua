@@ -16,7 +16,7 @@ function pytest.setup(opts)
 
   vim.api.nvim_create_user_command("PytestMkSnip", function ()
     local bufnr = vim.api.nvim_get_current_buf()
-    if next(vim.fs.find(opts['testDir'], {path=vim.loop.cwd(), type="direcotry", stop='yes'})) then
+    if vim.tbl_isempty(vim.fs.find(opts['testDir'], {path=vim.loop.cwd(), type="direcotry", stop='yes'})) ~= true then
       snippet.insertSnippet(bufnr, "n", opts['testDir'], 'test_'..vim.fn.expand('%'))
     else
       local createdDir = helper.createDir(opts['testDir'], opts['dirExistancePrmopt'])
