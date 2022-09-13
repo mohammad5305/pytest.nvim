@@ -2,7 +2,7 @@
 
                                          Type |gO| to see the table of contents.
 ==============================================================================
-INTRODUCTION                               		           *pytest.nvim*
+INTRODUCTION                                                       *pytest.nvim*
 
 pytest.nvim is a simple and fast plugin for making pytest snippet and running
 the tests blazingly fast
@@ -27,24 +27,25 @@ pytest.setup({opts})                                            *pytest.setup()*
 <
     
     
-SNIPPET							       	*pytest.snippet*
+SNIPPET                                                         *pytest.snippet*
 
-pytest.snippet.insertSnippet({bufnr}, {mode}, {testDir}, {filename}) *pytest.insertSnippet*
+snippet.insertSnippet({bufnr}, {mode}, {testDir}, {filename}) *pytest.snippet.insertSnippet*
 
     Description ~
-    Get query from |pytest.getQuery| and pipe the output to |pytest.makeSnippet| and write the output to {filename} on {testDir} directory.
+    Get query from |pytest.getQuery| and pipe the output to |pytest.makeSnippet| 
+    and write the output to {filename} on {testDir} directory.
 
     Parameters: ~
     {bufnr} 	(number)  the buffer number that the code is there
     {mode} 	(char)   the mode that query must consider when getting output, defualt 
-    is 'n' that mean making snippet for all functions on file, and 'v' mean just make snippet for
-    the selected range
+    is 'n' that mean making snippet for all functions on file, and 'v' mean 
+    just make snippet for the selected range
     {testDir} 	(string)  directory of test file
     {filename} 	(string)  name of the test file
 
 
 
-pytest.makeSnippet({functionName}, {docstring})            *pytest.makeSnippet*
+snippet.makeSnippet({functionName}, {docstring})    *pytest.snippet.makeSnippet*
 
     Description~
     format the defualt template with functionName and docstring
