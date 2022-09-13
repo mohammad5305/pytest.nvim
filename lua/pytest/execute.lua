@@ -14,7 +14,7 @@ end
 function execute.processReport(report)
   -- TODO: distinct the report
   local reportTbl = {}
-  for _, line in ipairs(vim.split(report, '\n'))  do
+  for _, line in ipairs(report)  do
     if string.find(line, ':') then
       local reportResult = vim.split(line, ':')
       local functionName, status = unpack(vim.split(reportResult[#reportResult], " "))
@@ -28,9 +28,8 @@ function execute.executePytest(bufnr, cmd, cwd)
   local function on_event(job_id, data, event)
     if event == "stdout" or event == "stderr" then
       if data then
-        local stringData = table.concat(data, "\n")
 
-        local report = execute.processReport(stringData)
+        local report = execute.processReport(data)
         
         local functionNames = helper.getQuery("(function_definition name: (identifier)@capture)", bufnr)
 
