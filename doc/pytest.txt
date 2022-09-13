@@ -61,9 +61,48 @@ snippet.makeSnippet({functionName}, {docstring})    *pytest.snippet.makeSnippet*
     {docstring} (string) docstring of the function
 
 
-HELPER                                                          *pytest.helper*
+EXECUTE                                                         *pytest.execute*
 
-pytest.snippet.getQuery({pattern}, {bufnr}, {parser})         *pytest.getQuery*
+execute.setSignCol({id}, {state}, {bufnr}, {line})   *pytest.execute.setSignCol*
+
+    Description~
+    set a sign with |sign-place| based on {state}
+
+    Parameters:~
+    {id} (number) id of sign
+    {state} (string) state of test report PASSED or FAILED
+    {bufnr} (number) buffer number that sign will set on
+    {line} (number) line of the test case
+
+
+execute.processReport({report})                   *pytest.execute.processReport*
+
+    Description~
+    process the output of pytest command and extract function name and result 
+    of test case
+
+    Parameters:~
+    {report} (string) output of pytest command
+
+    Return: ~
+    table: format function name and result of test case from the {report} into
+    a table
+
+execute.executePytest({bufnr}, {cmd}, {cwd})      *pytest.execute.executePytest*
+
+    Description~
+    a wrapper that call |pytest.execute.processReport| and
+    |pytest.execute.setSignCol| and uses |job| to run pytest command
+
+    Parameters:~
+    {bufnr} (number) buffer number that test file is on
+    {cmd} (string) the pytest command
+    {cwd} (string) directory that test file is there
+
+
+HELPER                                                           *pytest.helper*
+
+helper.getQuery({pattern}, {bufnr}, {parser})           *pytest.helper.getQuery*
 
     Description~
     with the given treesitter query and parser return a table of matches
@@ -73,6 +112,23 @@ pytest.snippet.getQuery({pattern}, {bufnr}, {parser})         *pytest.getQuery*
     {pattern} (string) treesitter query
     {bufnr} (number) buffer number that treesitter will look for matches on it
     {parser} (table) treesitter parser if not given parser will gotten from {bufnr}
+
+    Return: ~
+    table: objects of all matches 
+
+helper.createDir({dirName}, {prompt})                  *pytest.helper.createDir*
+
+    Description~
+    a wrapper that choose to make the {dirName} or ask for a directory name
+    based on {prompt}
+
+    Parameters:~
+    {dirName} (string) directory name from opt table
+    {prompt} (boolean) ask for a custom directory or uses {dirName} dir
+
+    Return: ~
+    string: the directory name
+
 
 
 vim:tw=78:ts=8:ft=help:norl:
