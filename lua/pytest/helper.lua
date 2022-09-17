@@ -21,9 +21,9 @@ end
 
 function helper.createDir(dirName, prompt)
   if prompt then
-    vim.ui.select({string.format('create %s', dirName), 'custom dir name'},
+    vim.ui.select({string.format('Create %s', dirName), 'Custom dir name'},
       {
-        prompt = string.format("%s no such directory in current path: ", dirName)
+        prompt = string.format("%s: No such directory", dirName)
       }, function(choice, number)
         vim.cmd("redraw")
 
@@ -34,6 +34,8 @@ function helper.createDir(dirName, prompt)
             vim.fn.mkdir(alterDir, 'p')
             dirName = string.find(alterDir, '/') and alterDir or alterDir .. '/'
           end)
+        else
+          vim.cmd('echoerr "Invalid choice"')
         end
 
       end)
