@@ -1,8 +1,6 @@
 local execute = {}
 local helper = require('pytest.helper')
 
-vim.cmd('sign define PytestSucces text=S')
-vim.cmd('sign define PytestFailed text=F')
 function execute.setSignCol(id, state, bufnr, line)
   if vim.trim(state) == "PASSED" then
     vim.cmd(string.format('sign place %s group=pytest name=PytestSucces line=%s', id, line))
