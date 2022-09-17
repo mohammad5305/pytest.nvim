@@ -21,9 +21,12 @@ end
 
 function helper.createDir(dirName, prompt)
   if prompt then
+    vim.cmd("echohl ErrorMsg")
+    vim.cmd(string.format('echo "%s: No such directory"', dirName))
+    vim.cmd("echohl None")
+
     vim.ui.select({string.format('Create %s', dirName), 'Custom dir name'},
       {
-        prompt = string.format("%s: No such directory", dirName)
       }, function(choice, number)
         vim.cmd("redraw")
 
