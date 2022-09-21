@@ -1,4 +1,4 @@
 if vim.g.loaded_pytest == 1 then
-    return
+  return
 end
 vim.g.loaded_pytest = 1
