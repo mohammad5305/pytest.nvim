@@ -29,13 +29,15 @@ use {
 For making snippet use `:PytestMkSnip` also for disabling the prompt when tests directory does
 not exist set `dirExistancePrmopt` option to false and for running tests `:PytestRun`
 
+**_NOTE:_**: parametrized test cases are not supported yet because there is no such good way to show more than one result in sign column
+
 ## Contributing
 Read [CONTRIBUTING.md](CONTRIBUTING.md)
 
 
 ## TODO
 * separate class snippet and function snippet
-* better asking style when opts[testDir] not exist
 * test multi function and more docstring
 * checking for performance when putting user commands in setup()
-* distinct the report string
+* priority of the sign
+* better Usage on README
