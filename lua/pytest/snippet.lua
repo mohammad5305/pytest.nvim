@@ -3,7 +3,7 @@ local snippet = {}
 
 local treesitter = vim.treesitter
 
-function snippet.makeSnippet(functionName, docstring)
+function snippet.makeTemplate(functionName, docstring)
   docstring = string.gsub(docstring, '[\n|\t|"""]', "")
   -- TODO: combin these regex
   docstring = string.gsub(docstring, "(%s+)(%s*)(%s+)", "")
@@ -18,7 +18,7 @@ function snippet.makeSnippet(functionName, docstring)
   )
 end
 
-function snippet.insertSnippet(bufnr, mode, testDir, filename)
+function snippet.makeSnippet(bufnr)
   local functionNames =
     helper.getQuery("(function_definition name: (identifier)@capture)", bufnr)
   local docstrings = helper.getQuery(
@@ -39,7 +39,7 @@ function snippet.insertSnippet(bufnr, mode, testDir, filename)
       table.insert(
         snippetTables,
         vim.split(
-          snippet.makeSnippet(
+          snippet.makeTemplate(
             treesitter.get_node_text(functionName, bufnr),
             treesitter.get_node_text(docstring, bufnr)
           ),
@@ -50,12 +50,13 @@ function snippet.insertSnippet(bufnr, mode, testDir, filename)
       repeat
         k = i + 1
         docstring = docstrings[k]
+      -- TODO: solve mystery of rowFuncName how does this works even man :)
       until rowFuncName + 1 >= tonumber(tostring(docstring:start()))
 
       table.insert(
         snippetTables,
         vim.split(
-          snippet.makeSnippet(
+          snippet.makeTemplate(
             treesitter.get_node_text(functionName, bufnr),
             treesitter.get_node_text(docstring, bufnr)
           ),
@@ -64,13 +65,18 @@ function snippet.insertSnippet(bufnr, mode, testDir, filename)
       )
     end
   end
+  return snippetTables
+end
+
+function snippet.insertSnippet(bufnr, testDir, filename)
   vim.cmd("e " .. testDir .. filename)
+  local snippetTables = snippet.makeSnippet(bufnr)
   local testFile = table.concat(
     vim.api.nvim_buf_get_lines(vim.api.nvim_get_current_buf(), 0, -1, false),
     "\n"
   )
 
-  for index, snippet in ipairs(snippetTables) do
+  for _, snippet in ipairs(snippetTables) do
     local functionPattern = "def %w+_(.+):"
     local _, _, snippetMatch =
       string.find(table.concat(snippet, "\n"), functionPattern)
