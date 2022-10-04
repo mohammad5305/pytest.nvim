@@ -6,14 +6,11 @@ function helper.getQuery(pattern, bufnr, parser)
   end
 
   local matches = {}
-  local syntax_tree = parser:parse()
-  local root = syntax_tree[1]:root()
+  local root = parser:parse()[1]:root()
 
   local query = vim.treesitter.parse_query("python", pattern)
 
-  for id, match, metadata in
-    query:iter_matches(root, bufnr, root:start(), root:end_())
-  do
+  for _, match, _ in query:iter_matches(root, bufnr, root:start(), root:end_()) do
     table.insert(matches, match[1])
   end
 
