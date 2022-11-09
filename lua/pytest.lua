@@ -13,7 +13,7 @@ function pytest.setup(opts)
     opts = defualtOpts
   end
 
-  vim.api.nvim_create_user_command("PytestMkSnip", function()
+  vim.api.nvim_create_user_command("PytestMkSnip", function(args)
     local bufnr = vim.api.nvim_get_current_buf()
 
     if
@@ -26,16 +26,16 @@ function pytest.setup(opts)
     then
       snippet.insertSnippet(
         bufnr,
-        "n",
         opts["testDir"],
-        "test_" .. vim.fn.expand("%")
+        "test_" .. vim.fn.expand("%"),
+        args
       )
     else
       local createdDir =
         helper.createDir(opts["testDir"], opts["dirExistancePrmopt"])
-      snippet.insertSnippet(bufnr, "n", createdDir, "test_" .. vim.fn.expand("%"))
+      snippet.insertSnippet(bufnr, createdDir, "test_" .. vim.fn.expand("%"), args)
     end
-  end, {})
+  end, { range = true, nargs = "*" })
 
   vim.api.nvim_create_user_command("PytestRun", function()
     local bufnr = vim.api.nvim_get_current_buf()
@@ -69,9 +69,6 @@ function pytest.setup(opts)
       vim.loop.cwd()
     )
   end, {})
-
-  -- vim.api.nvim_create_user_command("PytestMkSnipV", function ()
-  -- end, { range=true })
 end
 
 return pytest

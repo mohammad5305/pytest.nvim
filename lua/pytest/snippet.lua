@@ -34,19 +34,15 @@ function snippet.makeTemplate(functionName, docstring, insertClass, className)
   )
 end
 
-function snippet.makeSnippet(bufnr, args)
-  local queryFunction = "(function_definition name: (identifier)@capture)"
-  local queryDocstring =
-    "(function_definition body: (block (expression_statement (string)@capture)))"
+local function checkLn(functionln, linenumbers)
+  return vim.tbl_isempty(linenumbers) ~= true
+    and functionln:start() + 1 >= visual["start"]
+    and functionln:start() + 1 <= visual["end"]
+end
 
-  if vim.tbl_contains(args.fargs, "class") then
-    local classPart = "(class_definition body: (block"
-    queryFunction = classPart .. queryFunction .. "))"
-    queryDocstring = classPart .. queryDocstring .. "))"
-  end
-
-  local functionNames = helper.getQuery(queryFunction, bufnr)
-  local docstrings = helper.getQuery(queryDocstring, bufnr)
+local function findSnippetData(bufnr, functionPattern, docstringPattern, visual)
+  local functionNames = helper.getQuery(functionPattern, bufnr)
+  local docstrings = helper.getQuery(docstringPattern, bufnr)
   local snippetTables = {}
 
   for i = 1, #functionNames do
@@ -56,8 +52,9 @@ function snippet.makeSnippet(bufnr, args)
     -- TODO: weird but working :)
     if docstring then
       if
-        tonumber(tostring(functionName:start())) + 1
-        == tonumber(tostring(docstring:start()))
+        checkLn(functionName, visual)
+        or tonumber(tostring(functionName:start())) + 1
+          == tonumber(tostring(docstring:start()))
       then
         table.insert(
           snippetTables,
@@ -70,12 +67,8 @@ function snippet.makeSnippet(bufnr, args)
           )
         )
       else
-        repeat
-          k = i + 1
-          docstring = docstrings[k]
-        -- TODO: solve mystery of rowFuncName how does this works even man :)
-        until rowFuncName + 1 >= tonumber(tostring(docstring:start()))
-
+        -- local docstring = pairFuncs(functionName, functionNames) or pairFuncs(docstring, docstrings)
+        -- print(treesitter.get_node_text(docstring, bufnr))
         table.insert(
           snippetTables,
           vim.split(
@@ -88,16 +81,57 @@ function snippet.makeSnippet(bufnr, args)
         )
       end
     else
+      if checkLn(functionName, visual) then
+        table.insert(
+          snippetTables,
+          vim.split(
+            snippet.makeTemplate(treesitter.get_node_text(functionName, bufnr)),
+            "\n"
+          )
+        )
+      end
+    end
+  end
+
+  return snippetTables
+end
+
+function snippet.makeSnippet(bufnr, args)
+  local queryFunction = "(function_definition name: (identifier)@capture)"
+  local queryDocstring =
+    "(function_definition body: (block (expression_statement (string)@capture)))"
+
+  -- TODO: inserting class keyword when its class and not simple function
+  if args.range ~= 0 then
+    visual = { ["start"] = args.line1, ["end"] = args.line2 }
+  end
+  if vim.tbl_contains(args.fargs, "class") then
+    local classPart =
+      '(class_definition name: (identifier) @class (#eq? @class "%s") body: (block'
+    local classNames =
+      helper.getQuery("(class_definition name: (identifier)@capture)", bufnr)
+    queryFunction = classPart .. queryFunction .. "))"
+    queryDocstring = classPart .. queryDocstring .. "))"
+
+    local result = {}
+    for _, className in ipairs(classNames) do
+      className = vim.treesitter.get_node_text(className, bufnr)
       table.insert(
-        snippetTables,
-        vim.split(
-          snippet.makeTemplate(treesitter.get_node_text(functionName, bufnr)),
-          "\n"
+        result,
+        unpack(
+          findSnippetData(
+            bufnr,
+            string.format(queryFunction, className),
+            string.format(queryDocstring, className)
+          )
         )
       )
     end
+
+    return result
   end
-  return snippetTables
+
+  return findSnippetData(bufnr, queryFunction, queryDocstring, visual)
 end
 
 function snippet.insertSnippet(bufnr, testDir, filename, args)
