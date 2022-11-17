@@ -36,8 +36,4 @@ Read [CONTRIBUTING.md](CONTRIBUTING.md)
 
 
 ## TODO
-* separate class snippet and function snippet
-* test multi function and more docstring
-* checking for performance when putting user commands in setup()
-* priority of the sign
-* better Usage on README
+[TODO list](https://github.com/mohammad5305/pytest.nvim/issues/1)
