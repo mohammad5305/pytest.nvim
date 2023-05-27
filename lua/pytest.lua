@@ -20,7 +20,7 @@ function pytest.setup(opts)
       vim.tbl_isempty(
         vim.fs.find(
           opts["testDir"],
-          { path = vim.loop.cwd(), type = "direcotry", stop = "yes" }
+          { path = vim.loop.cwd(), type = "directory", stop = "yes" }
         )
       ) ~= true
     then
