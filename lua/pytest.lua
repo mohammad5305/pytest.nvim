@@ -4,8 +4,11 @@ local helper = require("pytest.helper")
 local execute = require("pytest.execute")
 local pytest = {}
 local defualtOpts = {
-  testDir = "tests/",
-  dirExistancePrmopt = nil,
+  snippet = {
+    doc_string = true,
+    directory = "tests/",
+    dir_not_exists_prompt = false,
+  },
 }
 
 function pytest.setup(opts)
@@ -15,24 +18,30 @@ function pytest.setup(opts)
 
   vim.api.nvim_create_user_command("PytestMkSnip", function(args)
     local bufnr = vim.api.nvim_get_current_buf()
+    local tests_directory = opts["snippet"]["directory"]
+
+    if vim.treesitter.language.get_lang("python") ~= "python" then
+      helper.notify("python parser not found.\n :TSInstall python", "ERROR")
+      return 0
+    end
 
     if
       vim.tbl_isempty(
         vim.fs.find(
-          opts["testDir"],
+          tests_directory,
           { path = vim.loop.cwd(), type = "directory", stop = "yes" }
         )
       ) ~= true
     then
       snippet.insertSnippet(
         bufnr,
-        opts["testDir"],
+        tests_directory,
         "test_" .. vim.fn.expand("%"),
         args
       )
     else
       local createdDir =
-        helper.createDir(opts["testDir"], opts["dirExistancePrmopt"])
+        helper.createDir(tests_directory, opts["snippet"]["dir_not_exists_prompt"])
       snippet.insertSnippet(bufnr, createdDir, "test_" .. vim.fn.expand("%"), args)
     end
   end, { range = true, nargs = "*" })

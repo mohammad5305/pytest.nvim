@@ -4,11 +4,11 @@ local snippet = {}
 local treesitter = vim.treesitter
 
 function snippet.makeTemplate(functionName, docstring, insertClass, className)
-  if docstring then
+  if docstring and #docstring ~= 0 then
     docstring = string.gsub(docstring, '[\n|\t|"""]', "")
     -- TODO: combin these regex
     docstring = string.gsub(docstring, "(%s+)(%s*)(%s+)", "")
-    docstring = '\n""" test ' .. docstring .. '"""'
+    docstring = '\n\t""" test ' .. docstring .. '"""'
   end
   if insertClass then
     return string.format(
@@ -34,62 +34,45 @@ function snippet.makeTemplate(functionName, docstring, insertClass, className)
   )
 end
 
-local function checkLn(functionln, linenumbers)
-  return vim.tbl_isempty(linenumbers) ~= true
-    and functionln:start() + 1 >= visual["start"]
-    and functionln:start() + 1 <= visual["end"]
-end
+local function findSnippetData(
+  bufnr,
+  with_docs_pattern,
+  without_docs_pattern,
+  visual
+)
+  local start, end_ = nil, nil
 
-local function findSnippetData(bufnr, functionPattern, docstringPattern, visual)
-  local functionNames = helper.getQuery(functionPattern, bufnr)
-  local docstrings = helper.getQuery(docstringPattern, bufnr)
+  if visual then
+    start, end_ = unpack(visual)
+  end
+
+  local with_docstring = helper.getQuery(bufnr, with_docs_pattern, {}, start, end_)
+  local without_docstring =
+    helper.getQuery(bufnr, without_docs_pattern, { "body" }, start, end_)
+
   local snippetTables = {}
+  local matches = helper.merge_tbl(with_docstring, without_docstring)
 
-  for i = 1, #functionNames do
-    local functionName = functionNames[i]
-    local docstring = docstrings[i]
-
-    -- TODO: weird but working :)
-    if docstring then
-      if
-        checkLn(functionName, visual)
-        or tonumber(tostring(functionName:start())) + 1
-          == tonumber(tostring(docstring:start()))
-      then
-        table.insert(
-          snippetTables,
-          vim.split(
-            snippet.makeTemplate(
-              treesitter.get_node_text(functionName, bufnr),
-              treesitter.get_node_text(docstring, bufnr)
-            ),
-            "\n"
-          )
+  for _, match in ipairs(matches) do
+    if #match == 2 then
+      table.insert(
+        snippetTables,
+        vim.split(
+          snippet.makeTemplate(
+            treesitter.get_node_text(match[1], bufnr),
+            treesitter.get_node_text(match[2], bufnr)
+          ),
+          "\n"
         )
-      else
-        -- local docstring = pairFuncs(functionName, functionNames) or pairFuncs(docstring, docstrings)
-        -- print(treesitter.get_node_text(docstring, bufnr))
-        table.insert(
-          snippetTables,
-          vim.split(
-            snippet.makeTemplate(
-              treesitter.get_node_text(functionName, bufnr),
-              treesitter.get_node_text(docstring, bufnr)
-            ),
-            "\n"
-          )
-        )
-      end
+      )
     else
-      if checkLn(functionName, visual) then
-        table.insert(
-          snippetTables,
-          vim.split(
-            snippet.makeTemplate(treesitter.get_node_text(functionName, bufnr)),
-            "\n"
-          )
+      table.insert(
+        snippetTables,
+        vim.split(
+          snippet.makeTemplate(treesitter.get_node_text(match[1], bufnr)),
+          "\n"
         )
-      end
+      )
     end
   end
 
@@ -97,41 +80,36 @@ local function findSnippetData(bufnr, functionPattern, docstringPattern, visual)
 end
 
 function snippet.makeSnippet(bufnr, args)
-  local queryFunction = "(function_definition name: (identifier)@capture)"
-  local queryDocstring =
-    "(function_definition body: (block (expression_statement (string)@capture)))"
+  local with_docstring =
+    "(function_definition name: (identifier) @funcname body: (block (expression_statement (string)@doc)))"
+  local without_docstring =
+    '(function_definition name: (identifier) @funcname body: (block)@body (#not-lua-match? @body "\\"\\"\\"%s+.+%s+\\"\\"\\""))'
+
+  local visual = args.range ~= 0 and { args.line1, args.line2 } or false
 
   -- TODO: inserting class keyword when its class and not simple function
-  if args.range ~= 0 then
-    visual = { ["start"] = args.line1, ["end"] = args.line2 }
-  end
   if vim.tbl_contains(args.fargs, "class") then
-    local classPart =
-      '(class_definition name: (identifier) @class (#eq? @class "%s") body: (block'
-    local classNames =
-      helper.getQuery("(class_definition name: (identifier)@capture)", bufnr)
-    queryFunction = classPart .. queryFunction .. "))"
-    queryDocstring = classPart .. queryDocstring .. "))"
+    -- local classPart = '(class_definition name: (identifier) @class (#eq? @class "%s") body: (block'
 
-    local result = {}
-    for _, className in ipairs(classNames) do
-      className = vim.treesitter.get_node_text(className, bufnr)
-      table.insert(
-        result,
-        unpack(
-          findSnippetData(
-            bufnr,
-            string.format(queryFunction, className),
-            string.format(queryDocstring, className)
-          )
-        )
-      )
-    end
-
-    return result
+    -- local result = {}
+    -- for _, className in ipairs(classNames) do
+    --   className = vim.treesitter.get_node_text(className, bufnr)
+    --   table.insert(
+    --     result,
+    --     unpack(
+    --       findSnippetData(
+    --         bufnr,
+    --         string.format(queryFunction, className),
+    --         string.format(queryDocstring, className)
+    --       )
+    --     )
+    --   )
   end
 
-  return findSnippetData(bufnr, queryFunction, queryDocstring, visual)
+  -- return result
+  -- end
+
+  return findSnippetData(bufnr, with_docstring, without_docstring, visual)
 end
 
 function snippet.insertSnippet(bufnr, testDir, filename, args)

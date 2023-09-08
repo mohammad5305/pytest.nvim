@@ -27,7 +27,7 @@ use {
 ## Usage
 
 For making snippet use `:PytestMkSnip` also for disabling the prompt when tests directory does
-not exist set `dirExistancePrmopt` option to false and for running tests `:PytestRun`
+not exist set `snippet.dir_not_exists_prompt` option to false and for running tests `:PytestRun`
 
 **_NOTE:_**: parametrized test cases are not supported yet because there is no such good way to show more than one result in sign column
 
